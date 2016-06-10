@@ -6,30 +6,33 @@
 //WiFi informationer
 const char* ssid     = "Mark's iPhone";
 const char* password = "LOLl0l69";
-HTTPClient http;
+
+String ID = "54"; //SHould be assigned by reader initialisation can be preserved here
+boolean stacked = false;
+
 
 void setup() {
   Serial.begin(115200);
   delay(10);
   wifiConnect();
-  startHTTP();
-
       
 }
 
 
-void startHTTP() {
-  
-  Serial.println("[HTTP] begin...");
-  // configure traged server and url
-  //http.begin("192.168.1.12", 443, "/test.html", true, "7a 9c f4 db 40 d3 62 5a 6e 21 bc 5c cc 66 c8 3e a1 45 59 38"); //HTTPS
-  http.begin("graungaard.com", 80, url); //HTTP
-  
-}
-
 void loop() {
   wifiCheck(); //Maintain wifi connection
   yield(); //Let the ESPcore handle background tasks
+
+  if(stacked == false) {
+
+    stacked = true;
+    sendID(ID);
+
+    
+  }
+
+
+  
   
 }
 
@@ -83,37 +86,23 @@ void wifiCheck()
 
 
 
-int makeGetRequest(String url) {
+void sendID(String ID) {
+  
+        HTTPClient http;
+        String url = "/post"; //
+
+        Serial.println("[HTTP] begin...");
+        // configure traged server and url
+        //http.begin("192.168.1.12", 443, "/test.html", true, "7a 9c f4 db 40 d3 62 5a 6e 21 bc 5c cc 66 c8 3e a1 45 59 38"); //HTTPS
+        http.begin("httpbin.org", 80, url); //HTTP
 
 
+        int response = http.POST(ID);
+
+        Serial.println(response);
+        
+        
   
 }
 
-
-void triggerIFTTTevent(String event) {
-
-        String url = "/3D/" + ID; //
-        
-        Serial.print("[HTTP] GET: ");
-        Serial.println(url);
-        // start connection and send HTTP header
-        int httpCode = http.GET();
-        if(httpCode) {
-            // HTTP header has been send and Server response header has been handled
-            Serial.print("[HTTP] Response! Code: ");
-            Serial.println(httpCode);
-
-            // file found at server
-            if(httpCode == 200) { //SUCCESS!
-              /*
-        Code here will be run, when the server has accepted your request.
-              */
-                String payload = http.getString();
-                Serial.println(payload);
-            }
-        } else {
-            Serial.println("[HTTP] GET... failed, no connection or no HTTP server");
-        }
-
-}
 
