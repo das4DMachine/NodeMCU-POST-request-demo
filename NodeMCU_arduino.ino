@@ -1,13 +1,11 @@
 #include <ESP8266WiFi.h>
 #include <ESP8266HTTPClient.h>
-//IFTTT informationer
-
 
 //WiFi informationer
 const char* ssid     = "Mark's iPhone";
 const char* password = "LOLl0l69";
 
-String ID = "54"; //SHould be assigned by reader initialisation can be preserved here
+String ID = "4"; //SHould be assigned by reader initialisation can be preserved here
 boolean stacked = false;
 
 
@@ -26,7 +24,9 @@ void loop() {
   if(stacked == false) {
 
     stacked = true;
-    sendID(ID);
+    //post("klods_id=" + ID + "&stacked_rfid=" + "25", "/3dserver/arduino/stack");
+    post("klods_id=" + ID, "/3dserver/arduino/unstack");
+    
 
     
   }
@@ -86,18 +86,17 @@ void wifiCheck()
 
 
 
-void sendID(String ID) {
+void post(String payload, String url) {
   
         HTTPClient http;
-        String url = "/post"; //
 
         Serial.println("[HTTP] begin...");
         // configure traged server and url
         //http.begin("192.168.1.12", 443, "/test.html", true, "7a 9c f4 db 40 d3 62 5a 6e 21 bc 5c cc 66 c8 3e a1 45 59 38"); //HTTPS
-        http.begin("httpbin.org", 80, url); //HTTP
+        http.begin("graungaard.com", 80, url); //HTTP
 
 
-        int response = http.POST(ID);
+        int response = http.POST(payload);
 
         Serial.println(response);
         
